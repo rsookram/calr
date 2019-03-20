@@ -9,9 +9,10 @@ const DAY_OF_WEEK_HEADER: &str = "Su Mo Tu We Th Fr Sa";
 fn main() {
     let now = Local::now();
 
-    println!("{:^20}", month_header(&now));
-    println!("{}", DAY_OF_WEEK_HEADER);
-    println!("{}", weeks(&now));
+    // Trailing spaces are for consistency with cal
+    println!("{:^20}  ", month_header(&now));
+    println!("{}  ", DAY_OF_WEEK_HEADER);
+    print!("{}", weeks(&now));
 }
 
 fn month_header(d: &DateTime<Local>) -> String {
@@ -42,12 +43,13 @@ fn weeks(d: &DateTime<Local>) -> String {
     let layout = layout_weeks(d);
     let last_week = layout.len() - 1;
     for (i, w) in layout.into_iter().enumerate() {
+        // Trailing spaces are for consistency with cal
         if i == 0 {
-            result.push_str(&format!("{:>20}", week(w)));
+            result.push_str(&format!("{:>20}  ", week(w)));
         } else if i == last_week {
-            result.push_str(&format!("{:<20}", week(w)));
+            result.push_str(&format!("{:<20}  ", week(w)));
         } else {
-            result.push_str(&format!("{}", week(w)));
+            result.push_str(&format!("{}  ", week(w)));
         }
         result.push('\n');
     }
