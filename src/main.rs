@@ -1,6 +1,7 @@
 extern crate chrono;
 
 use chrono::prelude::*;
+use std::cmp::min;
 use std::ops::RangeInclusive;
 
 const DAY_OF_WEEK_HEADER: &str = "Su Mo Tu We Th Fr Sa";
@@ -10,14 +11,7 @@ fn main() {
 
     println!("{:^20}", month_header(&now));
     println!("{}", DAY_OF_WEEK_HEADER);
-
-    // Layout hardcoded for March 2019
-    println!("{:>20}", week(1..=2));
-    println!("{}", week(3..=9));
-    println!("{}", week(10..=16));
-    println!("{}", week(17..=23));
-    println!("{}", week(24..=30));
-    println!("{:<20}", week(31..=31));
+    println!("{}", weeks(&now));
 }
 
 fn month_header(d: &DateTime<Local>) -> String {
@@ -42,7 +36,50 @@ fn month(d: &DateTime<Local>) -> &str {
     }
 }
 
-fn week(days: RangeInclusive<u8>) -> String {
+fn weeks(d: &DateTime<Local>) -> String {
+    let mut result = String::new();
+
+    let layout = layout_weeks(d);
+    let last_week = layout.len() - 1;
+    for (i, w) in layout.into_iter().enumerate() {
+        if i == 0 {
+            result.push_str(&format!("{:>20}", week(w)));
+        } else if i == last_week {
+            result.push_str(&format!("{:<20}", week(w)));
+        } else {
+            result.push_str(&format!("{}", week(w)));
+        }
+        result.push('\n');
+    }
+
+    result
+}
+
+fn layout_weeks(d: &DateTime<Local>) -> Vec<RangeInclusive<u32>> {
+    let initial_weekday = weekday_for_first(d);
+
+    let last_day_in_month = num_days_in_month(d);
+    let mut days_remaining = last_day_in_month;
+    let mut start = 1;
+
+    let mut result = vec![];
+
+    let days_in_first_week = 7 - initial_weekday.num_days_from_sunday();
+    result.push(start..=days_in_first_week);
+    start += days_in_first_week;
+    days_remaining -= days_in_first_week;
+
+    while days_remaining > 0 {
+        let end_of_week = min(start + 6, last_day_in_month);
+        result.push(start..=end_of_week);
+        start += 7;
+        days_remaining = if days_remaining >= 7 { days_remaining - 7 } else { 0 };
+    }
+
+    result
+}
+
+fn week(days: RangeInclusive<u32>) -> String {
     days.map(|d| format!("{:2}", d))
         .collect::<Vec<String>>()
         .join(" ")
@@ -52,9 +89,9 @@ fn weekday_for_first(d: &DateTime<Local>) -> Weekday {
     d.with_day0(0).unwrap().weekday()
 }
 
-fn num_days_in_month(d: &DateTime<Local>) -> u8 {
-    for i in (28u8..=31u8).rev() {
-        if let Some(_) = d.with_day(u32::from(i)) {
+fn num_days_in_month(d: &DateTime<Local>) -> u32 {
+    for i in (28..=31).rev() {
+        if let Some(_) = d.with_day(i) {
             return i;
         }
     }
