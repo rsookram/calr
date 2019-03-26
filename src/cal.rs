@@ -7,6 +7,7 @@ use std::ops::RangeInclusive;
 const TRAILING_SPACE: &str = "  ";
 const DAY_OF_WEEK_HEADER: &str = "Su Mo Tu We Th Fr Sa";
 
+#[derive(PartialEq, Eq, Hash, PartialOrd, Ord, Clone, Debug)]
 pub struct Month {
     date: NaiveDate,
 }
@@ -120,6 +121,66 @@ mod test {
     use super::*;
 
     #[test]
+    fn invalid_year() {
+        let m = Month::new(262144, 1);
+        assert_eq!(None, m);
+    }
+
+    #[test]
+    fn invalid_month() {
+        let m = Month::new(2019, 15);
+        assert_eq!(None, m);
+    }
+
+    #[test]
+    fn january() {
+        let m = Month::new(2019, 1).expect("invalid date");
+        let actual = format!("{}", m);
+        let expected = from_formatted(r#"
+            |    January 2019      |
+            |Su Mo Tu We Th Fr Sa  |
+            |       1  2  3  4  5  |
+            | 6  7  8  9 10 11 12  |
+            |13 14 15 16 17 18 19  |
+            |20 21 22 23 24 25 26  |
+            |27 28 29 30 31        |
+        "#);
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn february_leap_year() {
+        let m = Month::new(2016, 2).expect("invalid date");
+        let actual = format!("{}", m);
+        let expected = from_formatted(r#"
+            |   February 2016      |
+            |Su Mo Tu We Th Fr Sa  |
+            |    1  2  3  4  5  6  |
+            | 7  8  9 10 11 12 13  |
+            |14 15 16 17 18 19 20  |
+            |21 22 23 24 25 26 27  |
+            |28 29                 |
+        "#);
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn february_not_leap_year() {
+        let m = Month::new(2019, 2).expect("invalid date");
+        let actual = format!("{}", m);
+        let expected = from_formatted(r#"
+            |   February 2019      |
+            |Su Mo Tu We Th Fr Sa  |
+            |                1  2  |
+            | 3  4  5  6  7  8  9  |
+            |10 11 12 13 14 15 16  |
+            |17 18 19 20 21 22 23  |
+            |24 25 26 27 28        |
+        "#);
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
     fn march() {
         let m = Month::new(2019, 3).expect("invalid date");
         let actual = format!("{}", m);
@@ -132,6 +193,151 @@ mod test {
             |17 18 19 20 21 22 23  |
             |24 25 26 27 28 29 30  |
             |31                    |
+        "#);
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn april() {
+        let m = Month::new(2019, 4).expect("invalid date");
+        let actual = format!("{}", m);
+        let expected = from_formatted(r#"
+            |     April 2019       |
+            |Su Mo Tu We Th Fr Sa  |
+            |    1  2  3  4  5  6  |
+            | 7  8  9 10 11 12 13  |
+            |14 15 16 17 18 19 20  |
+            |21 22 23 24 25 26 27  |
+            |28 29 30              |
+        "#);
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn may() {
+        let m = Month::new(2019, 5).expect("invalid date");
+        let actual = format!("{}", m);
+        let expected = from_formatted(r#"
+            |      May 2019        |
+            |Su Mo Tu We Th Fr Sa  |
+            |          1  2  3  4  |
+            | 5  6  7  8  9 10 11  |
+            |12 13 14 15 16 17 18  |
+            |19 20 21 22 23 24 25  |
+            |26 27 28 29 30 31     |
+        "#);
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn june() {
+        let m = Month::new(2019, 6).expect("invalid date");
+        let actual = format!("{}", m);
+        let expected = from_formatted(r#"
+            |     June 2019        |
+            |Su Mo Tu We Th Fr Sa  |
+            |                   1  |
+            | 2  3  4  5  6  7  8  |
+            | 9 10 11 12 13 14 15  |
+            |16 17 18 19 20 21 22  |
+            |23 24 25 26 27 28 29  |
+            |30                    |
+        "#);
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn july() {
+        let m = Month::new(2019, 7).expect("invalid date");
+        let actual = format!("{}", m);
+        let expected = from_formatted(r#"
+            |     July 2019        |
+            |Su Mo Tu We Th Fr Sa  |
+            |    1  2  3  4  5  6  |
+            | 7  8  9 10 11 12 13  |
+            |14 15 16 17 18 19 20  |
+            |21 22 23 24 25 26 27  |
+            |28 29 30 31           |
+        "#);
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn august() {
+        let m = Month::new(2019, 8).expect("invalid date");
+        let actual = format!("{}", m);
+        let expected = from_formatted(r#"
+            |    August 2019       |
+            |Su Mo Tu We Th Fr Sa  |
+            |             1  2  3  |
+            | 4  5  6  7  8  9 10  |
+            |11 12 13 14 15 16 17  |
+            |18 19 20 21 22 23 24  |
+            |25 26 27 28 29 30 31  |
+        "#);
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn september() {
+        let m = Month::new(2019, 9).expect("invalid date");
+        let actual = format!("{}", m);
+        let expected = from_formatted(r#"
+            |   September 2019     |
+            |Su Mo Tu We Th Fr Sa  |
+            | 1  2  3  4  5  6  7  |
+            | 8  9 10 11 12 13 14  |
+            |15 16 17 18 19 20 21  |
+            |22 23 24 25 26 27 28  |
+            |29 30                 |
+        "#);
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn october() {
+        let m = Month::new(2019, 10).expect("invalid date");
+        let actual = format!("{}", m);
+        let expected = from_formatted(r#"
+            |    October 2019      |
+            |Su Mo Tu We Th Fr Sa  |
+            |       1  2  3  4  5  |
+            | 6  7  8  9 10 11 12  |
+            |13 14 15 16 17 18 19  |
+            |20 21 22 23 24 25 26  |
+            |27 28 29 30 31        |
+        "#);
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn november() {
+        let m = Month::new(2019, 11).expect("invalid date");
+        let actual = format!("{}", m);
+        let expected = from_formatted(r#"
+            |   November 2019      |
+            |Su Mo Tu We Th Fr Sa  |
+            |                1  2  |
+            | 3  4  5  6  7  8  9  |
+            |10 11 12 13 14 15 16  |
+            |17 18 19 20 21 22 23  |
+            |24 25 26 27 28 29 30  |
+        "#);
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn december() {
+        let m = Month::new(2019, 12).expect("invalid date");
+        let actual = format!("{}", m);
+        let expected = from_formatted(r#"
+            |   December 2019      |
+            |Su Mo Tu We Th Fr Sa  |
+            | 1  2  3  4  5  6  7  |
+            | 8  9 10 11 12 13 14  |
+            |15 16 17 18 19 20 21  |
+            |22 23 24 25 26 27 28  |
+            |29 30 31              |
         "#);
         assert_eq!(expected, actual);
     }
