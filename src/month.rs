@@ -92,13 +92,11 @@ impl Month {
     }
 
     fn num_days_in_month(&self) -> u32 {
-        for i in (28..=31).rev() {
-            if let Some(_) = self.date.with_day(i) {
-                return i;
-            }
-        }
-
-        panic!("unknown number of days in month {}", self.date.month());
+        (28..=31)
+            .rev()
+            .filter(|&i| self.date.with_day(i).is_some())
+            .nth(0)
+            .unwrap_or_else(|| panic!("unknown number of days in month {}", self.date.month()))
     }
 }
 
