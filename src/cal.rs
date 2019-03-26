@@ -114,3 +114,34 @@ impl fmt::Display for Month {
         write!(f, "{}", self.weeks())
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn march() {
+        let m = Month::new(2019, 3).expect("invalid date");
+        let actual = format!("{}", m);
+        let expected = from_formatted(r#"
+            |     March 2019       |
+            |Su Mo Tu We Th Fr Sa  |
+            |                1  2  |
+            | 3  4  5  6  7  8  9  |
+            |10 11 12 13 14 15 16  |
+            |17 18 19 20 21 22 23  |
+            |24 25 26 27 28 29 30  |
+            |31                    |
+        "#);
+        assert_eq!(expected, actual);
+    }
+
+    fn from_formatted(month_str: &str) -> String {
+        month_str
+            .split("\n")
+            .filter(|line| line.contains("|"))
+            .filter_map(|line| line.split("|").nth(1))
+            .map(|line| line.to_string() + "\n")
+            .collect()
+    }
+}
