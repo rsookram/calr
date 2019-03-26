@@ -3,6 +3,8 @@ use std::cmp::min;
 use std::fmt;
 use std::ops::RangeInclusive;
 
+// Trailing spaces are for consistency with cal
+const TRAILING_SPACE: &str = "  ";
 const DAY_OF_WEEK_HEADER: &str = "Su Mo Tu We Th Fr Sa";
 
 pub struct Month {
@@ -42,14 +44,14 @@ impl Month {
         let layout = self.layout_weeks();
         let last_week = layout.len() - 1;
         for (i, w) in layout.into_iter().enumerate() {
-            // Trailing spaces are for consistency with cal
             if i == 0 {
-                result.push_str(&format!("{:>20}  ", Month::week(w)));
+                result.push_str(&format!("{:>20}", Month::week(w)));
             } else if i == last_week {
-                result.push_str(&format!("{:<20}  ", Month::week(w)));
+                result.push_str(&format!("{:<20}", Month::week(w)));
             } else {
-                result.push_str(&format!("{}  ", Month::week(w)));
+                result.push_str(&format!("{}", Month::week(w)));
             }
+            result.push_str(TRAILING_SPACE);
             result.push('\n');
         }
 
@@ -105,9 +107,10 @@ impl Month {
 
 impl fmt::Display for Month {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
-        // Trailing spaces are for consistency with cal
-        writeln!(f, "{:^20}  ", self.month_header())?;
-        writeln!(f, "{}  ", DAY_OF_WEEK_HEADER)?;
+        write!(f, "{:^20}", self.month_header())?;
+        writeln!(f, "{}", TRAILING_SPACE)?;
+        write!(f, "{}", DAY_OF_WEEK_HEADER)?;
+        writeln!(f, "{}", TRAILING_SPACE)?;
         write!(f, "{}", self.weeks())
     }
 }
