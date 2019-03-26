@@ -12,7 +12,7 @@ pub struct Month {
 impl Month {
     pub fn new(y: i32, m: u32) -> Option<Month> {
         let date = NaiveDate::from_ymd_opt(y, m, 1)?;
-        Some(Month { date, })
+        Some(Month { date })
     }
 
     fn month_header(&self) -> String {
@@ -20,21 +20,20 @@ impl Month {
     }
 
     fn month_name(&self) -> &str {
-        match self.date.month() {
-            1 => "January",
-            2 => "February",
-            3 => "March",
-            4 => "April",
-            5 => "May",
-            6 => "June",
-            7 => "July",
-            8 => "August",
-            9 => "September",
-            10 => "October",
-            11 => "November",
-            12 => "December",
-            _ => panic!("invalid month {}", self.date.month()),
-        }
+        [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+        ][self.date.month0() as usize]
     }
 
     fn weeks(&self) -> String {
@@ -75,7 +74,11 @@ impl Month {
             let end_of_week = min(start + 6, last_day_in_month);
             result.push(start..=end_of_week);
             start += 7;
-            days_remaining = if days_remaining >= 7 { days_remaining - 7 } else { 0 };
+            days_remaining = if days_remaining >= 7 {
+                days_remaining - 7
+            } else {
+                0
+            };
         }
 
         result
