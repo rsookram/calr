@@ -50,7 +50,7 @@ impl Month {
             } else if i == last_week {
                 result.push_str(&format!("{:<20}", Month::week(w)));
             } else {
-                result.push_str(&format!("{}", Month::week(w)));
+                result.push_str(&Month::week(w));
             }
             result.push_str(TRAILING_SPACE);
             result.push('\n');

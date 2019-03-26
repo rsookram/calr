@@ -21,7 +21,7 @@ fn main() {
     let now = Local::now().naive_local().date();
 
     let year = now.year();
-    let month_number = opt.month.unwrap_or(now.month());
+    let month_number = opt.month.unwrap_or_else(|| now.month());
     if month_number < 1 || month_number > 12 {
         let error = format!(
             "calendarust: {} is not a month number (1..12)",
