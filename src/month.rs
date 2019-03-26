@@ -1,15 +1,28 @@
 use chrono::prelude::*;
 use std::cmp::min;
+use std::fmt;
 use std::ops::RangeInclusive;
 
 const DAY_OF_WEEK_HEADER: &str = "Su Mo Tu We Th Fr Sa";
 
-pub fn print(y: i32, m: u32) {
-    let d = NaiveDate::from_ymd(y, m, 1);
-    // Trailing spaces are for consistency with cal
-    println!("{:^20}  ", month_header(&d));
-    println!("{}  ", DAY_OF_WEEK_HEADER);
-    print!("{}", weeks(&d));
+pub struct Month {
+    date: NaiveDate,
+}
+
+impl Month {
+    pub fn new(y: i32, m: u32) -> Option<Month> {
+        let date = NaiveDate::from_ymd_opt(y, m, 1)?;
+        Some(Month { date, })
+    }
+}
+
+impl fmt::Display for Month {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        // Trailing spaces are for consistency with cal
+        writeln!(f, "{:^20}  ", month_header(&self.date))?;
+        writeln!(f, "{}  ", DAY_OF_WEEK_HEADER)?;
+        write!(f, "{}", weeks(&self.date))
+    }
 }
 
 fn month_header(d: &NaiveDate) -> String {
