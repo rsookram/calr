@@ -8,11 +8,15 @@ const DAY_OF_WEEK_HEADER: &str = "Su Mo Tu We Th Fr Sa";
 
 fn main() {
     let now = Local::now().naive_local().date();
+    print(now.year(), now.month());
+}
 
+fn print(y: i32, m: u32) {
+    let d = NaiveDate::from_ymd(y, m, 1);
     // Trailing spaces are for consistency with cal
-    println!("{:^20}  ", month_header(&now));
+    println!("{:^20}  ", month_header(&d));
     println!("{}  ", DAY_OF_WEEK_HEADER);
-    print!("{}", weeks(&now));
+    print!("{}", weeks(&d));
 }
 
 fn month_header(d: &NaiveDate) -> String {
