@@ -7,7 +7,7 @@ use std::ops::RangeInclusive;
 const DAY_OF_WEEK_HEADER: &str = "Su Mo Tu We Th Fr Sa";
 
 fn main() {
-    let now = Local::now();
+    let now = Local::now().naive_local().date();
 
     // Trailing spaces are for consistency with cal
     println!("{:^20}  ", month_header(&now));
@@ -15,11 +15,11 @@ fn main() {
     print!("{}", weeks(&now));
 }
 
-fn month_header(d: &DateTime<Local>) -> String {
+fn month_header(d: &NaiveDate) -> String {
     format!("{} {}", month(d), d.year())
 }
 
-fn month(d: &DateTime<Local>) -> &str {
+fn month(d: &NaiveDate) -> &str {
     match d.month() {
         1 => "January",
         2 => "February",
@@ -37,7 +37,7 @@ fn month(d: &DateTime<Local>) -> &str {
     }
 }
 
-fn weeks(d: &DateTime<Local>) -> String {
+fn weeks(d: &NaiveDate) -> String {
     let mut result = String::new();
 
     let layout = layout_weeks(d);
@@ -57,7 +57,7 @@ fn weeks(d: &DateTime<Local>) -> String {
     result
 }
 
-fn layout_weeks(d: &DateTime<Local>) -> Vec<RangeInclusive<u32>> {
+fn layout_weeks(d: &NaiveDate) -> Vec<RangeInclusive<u32>> {
     let initial_weekday = weekday_for_first(d);
 
     let last_day_in_month = num_days_in_month(d);
@@ -87,11 +87,11 @@ fn week(days: RangeInclusive<u32>) -> String {
         .join(" ")
 }
 
-fn weekday_for_first(d: &DateTime<Local>) -> Weekday {
+fn weekday_for_first(d: &NaiveDate) -> Weekday {
     d.with_day0(0).unwrap().weekday()
 }
 
-fn num_days_in_month(d: &DateTime<Local>) -> u32 {
+fn num_days_in_month(d: &NaiveDate) -> u32 {
     for i in (28..=31).rev() {
         if let Some(_) = d.with_day(i) {
             return i;
