@@ -10,6 +10,10 @@ use structopt::StructOpt;
 #[derive(StructOpt)]
 #[structopt(name = "calendarust")]
 struct Opt {
+    /// Display the specified year.
+    #[structopt(name = "year", short = "y")]
+    year: Option<i32>,
+
     /// Display the specified month.
     #[structopt(name = "month", short = "m")]
     month: Option<u32>,
@@ -20,13 +24,15 @@ fn main() {
 
     let now = Local::now().naive_local().date();
 
-    let year = now.year();
+    let year = opt.year.unwrap_or_else(|| now.year());
+    if year < 1 || year > 9999 {
+        let error = format!("year `{}' is not in range 1..9999", year);
+        exit_with_error_code(&error, 64)
+    }
+
     let month_number = opt.month.unwrap_or_else(|| now.month());
     if month_number < 1 || month_number > 12 {
-        let error = format!(
-            "calendarust: {} is not a month number (1..12)",
-            month_number
-        );
+        let error = format!("{} is not a month number (1..12)", month_number);
         exit_with_error_code(&error, 64)
     }
 
@@ -35,6 +41,6 @@ fn main() {
 }
 
 fn exit_with_error_code(err: &str, code: i32) {
-    eprintln!("{}", err);
+    eprintln!("calendarust: {}", err);
     std::process::exit(code);
 }
