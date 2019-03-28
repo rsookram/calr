@@ -18,6 +18,17 @@ impl Month {
         Some(Month { date })
     }
 
+    pub fn year(&self) -> i32 {
+        self.date.year()
+    }
+
+    /// Returns the month number starting from 1.
+    ///
+    /// The return value ranges from 1 to 12.
+    pub fn month_number(&self) -> u32 {
+        self.date.month()
+    }
+
     fn month_header(&self) -> String {
         format!("{} {}", self.month_name(), self.date.year())
     }
