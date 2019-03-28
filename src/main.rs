@@ -1,7 +1,7 @@
-mod cal;
+mod month;
 
-use cal::Month;
 use chrono::prelude::*;
+use month::Month;
 use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
