@@ -1,6 +1,3 @@
-extern crate chrono;
-extern crate structopt;
-
 mod cal;
 
 use cal::Month;
