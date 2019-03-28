@@ -7,7 +7,7 @@ use cal::Month;
 use chrono::prelude::*;
 use structopt::StructOpt;
 
-#[derive(StructOpt)]
+#[derive(StructOpt, Debug)]
 #[structopt(name = "calendarust")]
 struct Opt {
     /// Display the specified year.
