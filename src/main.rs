@@ -1,6 +1,7 @@
 mod month;
 
 use chrono::prelude::*;
+use month::iter::MonthGenerator;
 use month::Month;
 use structopt::StructOpt;
 
@@ -14,6 +15,10 @@ struct Opt {
     /// Display the specified month.
     #[structopt(name = "month", short = "m")]
     month: Option<u32>,
+
+    /// Display the number of months after the current month.
+    #[structopt(name = "months after", short = "A", default_value = "0")]
+    months_after: u16,
 }
 
 fn main() {
@@ -34,7 +39,14 @@ fn main() {
     }
 
     let m = Month::new(year, month_number).expect("invalid time");
-    println!("{}", m);
+    let gen = MonthGenerator::new(m);
+
+    let output = gen
+        .take(usize::from(opt.months_after + 1))
+        .map(|month| format!("{}", month))
+        .collect::<Vec<_>>()
+        .join("\n");
+    println!("{}", output);
 }
 
 fn exit_with_error_code(err: &str, code: i32) {
