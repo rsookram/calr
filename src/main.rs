@@ -19,6 +19,10 @@ struct Opt {
     /// Display the number of months after the current month.
     #[structopt(name = "months after", short = "A", default_value = "0")]
     months_after: u16,
+
+    /// Display the number of months before the current month.
+    #[structopt(name = "months before", short = "B", default_value = "0")]
+    months_before: u16,
 }
 
 fn main() {
@@ -39,10 +43,14 @@ fn main() {
     }
 
     let m = Month::new(year, month_number).expect("invalid time");
-    let gen = MonthGenerator::new(m);
+    let mut gen = MonthGenerator::new(m);
+
+    if opt.months_before > 0 {
+        gen.nth_prev(usize::from(opt.months_before) - 1);
+    }
 
     let output = gen
-        .take(usize::from(opt.months_after + 1))
+        .take(usize::from(opt.months_after + opt.months_before) + 1)
         .map(|month| format!("{}", month))
         .collect::<Vec<_>>()
         .join("\n");
