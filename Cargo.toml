@@ -7,3 +7,7 @@ edition = "2018"
 [dependencies]
 chrono = "0.4"
 structopt = "0.2"
+
+[profile.release]
+lto = true
+codegen-units = 1
