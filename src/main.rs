@@ -30,6 +30,14 @@ fn main() {
 
     let now = Local::now().naive_local().date();
 
+    let output = months(now, opt)
+        .map(|month| format!("{}", month))
+        .collect::<Vec<_>>()
+        .join("\n");
+    println!("{}", output);
+}
+
+fn months(now: NaiveDate, opt: Opt) -> impl Iterator<Item = Month> {
     let year = opt.year.unwrap_or_else(|| now.year());
     if year < 1 || year > 9999 {
         let error = format!("year `{}' is not in range 1..9999", year);
@@ -49,12 +57,7 @@ fn main() {
         gen.nth_prev(usize::from(opt.months_before) - 1);
     }
 
-    let output = gen
-        .take(usize::from(opt.months_after + opt.months_before) + 1)
-        .map(|month| format!("{}", month))
-        .collect::<Vec<_>>()
-        .join("\n");
-    println!("{}", output);
+    gen.take(usize::from(opt.months_after + opt.months_before) + 1)
 }
 
 fn exit_with_error_code(err: &str, code: i32) {
