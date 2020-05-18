@@ -1,12 +1,13 @@
 [package]
 name = "calr"
 version = "0.1.0"
-authors = ["rsookran <rashadsookram@gmail.com>"]
+authors = ["rsookram <rashadsookram@gmail.com>"]
 edition = "2018"
+description = "Command-line tool which displays a calendar"
 
 [dependencies]
 chrono = "0.4"
-structopt = "0.2"
+structopt = "0.3"
 
 [profile.release]
 lto = true

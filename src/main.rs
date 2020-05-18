@@ -6,7 +6,7 @@ use month::Month;
 use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
-#[structopt(name = "calr")]
+#[structopt(name = "calr", author, about)]
 struct Opt {
     /// Display the specified year.
     #[structopt(name = "year", short = "y")]
