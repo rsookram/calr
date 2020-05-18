@@ -30,14 +30,14 @@ fn main() {
 
     let now = Local::now().naive_local().date();
 
-    let output = months(now, opt)
+    let output = months(now, &opt)
         .map(|month| format!("{}", month))
         .collect::<Vec<_>>()
         .join("\n");
     println!("{}", output);
 }
 
-fn months(now: NaiveDate, opt: Opt) -> impl Iterator<Item = Month> {
+fn months(now: NaiveDate, opt: &Opt) -> impl Iterator<Item = Month> {
     let year = opt.year.unwrap_or_else(|| now.year());
     if year < 1 || year > 9999 {
         let error = format!("year `{}' is not in range 1..9999", year);
