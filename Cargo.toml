@@ -1,5 +1,5 @@
 [package]
-name = "calendarust"
+name = "calr"
 version = "0.1.0"
 authors = ["rsookran <rashadsookram@gmail.com>"]
 edition = "2018"

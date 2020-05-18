@@ -6,7 +6,7 @@ use month::Month;
 use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
-#[structopt(name = "calendarust")]
+#[structopt(name = "calr")]
 struct Opt {
     /// Display the specified year.
     #[structopt(name = "year", short = "y")]
@@ -61,6 +61,6 @@ fn months(now: NaiveDate, opt: Opt) -> impl Iterator<Item = Month> {
 }
 
 fn exit_with_error_code(err: &str, code: i32) {
-    eprintln!("calendarust: {}", err);
+    eprintln!("calr: {}", err);
     std::process::exit(code);
 }
