@@ -10,19 +10,19 @@ use structopt::StructOpt;
 #[derive(StructOpt, Debug)]
 #[structopt(name = "calr", author, about)]
 struct Opt {
-    /// Display the specified year.
+    /// Display the specified year [default: current]
     #[structopt(name = "year", short = "y")]
     year: Option<i32>,
 
-    /// Display the specified month.
+    /// Display the specified month [default: current]
     #[structopt(name = "month", short = "m")]
     month: Option<u32>,
 
-    /// Display the number of months after the current month.
+    /// Display the number of months after the current month
     #[structopt(name = "months after", short = "A", default_value = "0")]
     months_after: u16,
 
-    /// Display the number of months before the current month.
+    /// Display the number of months before the current month
     #[structopt(name = "months before", short = "B", default_value = "0")]
     months_before: u16,
 }

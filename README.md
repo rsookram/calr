@@ -37,10 +37,10 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
-    -m <month>                Display the specified month
+    -m <month>                Display the specified month [default: current]
     -A <months after>         Display the number of months after the current month [default: 0]
     -B <months before>        Display the number of months before the current month [default: 0]
-    -y <year>                 Display the specified year
+    -y <year>                 Display the specified year [default: current]
 ```
 
 ## Building
