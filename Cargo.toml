@@ -12,7 +12,7 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 chrono = "0.4"
-structopt = "0.3"
+structopt = { version = "0.3", default-features = false }
 
 [profile.release]
 lto = true
