@@ -9,17 +9,22 @@ use std::ops::RangeInclusive;
 const TRAILING_SPACE: &str = "  ";
 const DAY_OF_WEEK_HEADER: &str = "Su Mo Tu We Th Fr Sa";
 
+/// A calendar month associated with a specific year
 #[derive(PartialEq, Eq, Hash, PartialOrd, Ord, Clone, Debug)]
 pub struct Month {
     date: NaiveDate,
 }
 
 impl Month {
-    pub fn new(y: i32, m: u32) -> Option<Month> {
-        let date = NaiveDate::from_ymd_opt(y, m, 1)?;
+    /// Creates a new `Month` associated with the given `year` and `month`.
+    ///
+    /// Returns `None` on the out-of-range year or invalid month.
+    pub fn new(year: i32, month: u32) -> Option<Month> {
+        let date = NaiveDate::from_ymd_opt(year, month, 1)?;
         Some(Month { date })
     }
 
+    /// The year this `Month` is associated with
     pub fn year(&self) -> i32 {
         self.date.year()
     }
@@ -31,10 +36,12 @@ impl Month {
         self.date.month()
     }
 
+    /// Allocates a `String` to display as the header of this `Month`
     fn month_header(&self) -> String {
         format!("{} {}", self.month_name(), self.date.year())
     }
 
+    /// Returns the full English name of the `Month`. e.g. "September".
     fn month_name(&self) -> &str {
         [
             "January",
@@ -52,6 +59,7 @@ impl Month {
         ][self.date.month0() as usize]
     }
 
+    /// Allocates a `String` to display the weeks of this `Month`
     fn weeks(&self) -> String {
         let mut result = String::new();
 
