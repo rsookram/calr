@@ -19,12 +19,28 @@ impl Month {
     /// Creates a new `Month` associated with the given `year` and `month`.
     ///
     /// Returns `None` on the out-of-range year or invalid month.
+    ///
+    /// ```
+    /// use calr::month::Month;
+    ///
+    /// assert!(Month::new(2020, 0).is_none());
+    /// assert!(Month::new(2020, 1).is_some());
+    ///
+    /// assert!(Month::new(2020, 12).is_some());
+    /// assert!(Month::new(2020, 13).is_none());
+    /// ```
     pub fn new(year: i32, month: u32) -> Option<Month> {
         let date = NaiveDate::from_ymd_opt(year, month, 1)?;
         Some(Month { date })
     }
 
     /// The year this `Month` is associated with
+    ///
+    /// ```
+    /// use calr::month::Month;
+    ///
+    /// assert_eq!(Month::new(2020, 1).unwrap().year(), 2020);
+    /// ```
     pub fn year(&self) -> i32 {
         self.date.year()
     }
@@ -32,6 +48,13 @@ impl Month {
     /// Returns the month number starting from 1.
     ///
     /// The return value ranges from 1 to 12.
+    ///
+    /// ```
+    /// use calr::month::Month;
+    ///
+    /// assert_eq!(Month::new(2020, 1).unwrap().month_number(), 1);
+    /// assert_eq!(Month::new(2020, 12).unwrap().month_number(), 12);
+    /// ```
     pub fn month_number(&self) -> u32 {
         self.date.month()
     }

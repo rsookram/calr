@@ -1,10 +1,9 @@
 mod error;
-mod month;
 
+use calr::month::iter::MonthGenerator;
+use calr::month::Month;
 use chrono::prelude::*;
 use error::Error;
-use month::iter::MonthGenerator;
-use month::Month;
 use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
