@@ -18,7 +18,7 @@ pub struct Month {
 impl Month {
     /// Creates a new `Month` associated with the given `year` and `month`.
     ///
-    /// Returns `None` on the out-of-range year or invalid month.
+    /// Returns `None` on an out-of-range year or invalid month.
     ///
     /// ```
     /// use calr::month::Month;
@@ -34,7 +34,7 @@ impl Month {
         Some(Month { date })
     }
 
-    /// The year this `Month` is associated with
+    /// The year this `Month` is associated with.
     ///
     /// ```
     /// use calr::month::Month;
