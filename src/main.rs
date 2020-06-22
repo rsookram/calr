@@ -4,30 +4,43 @@ use calr::month::iter::MonthGenerator;
 use calr::month::Month;
 use chrono::prelude::*;
 use error::Error;
-use structopt::StructOpt;
+use gumdrop::Options;
 
-#[derive(StructOpt, Debug)]
-#[structopt(name = "calr", author, about)]
+/// Command-line tool which displays a calendar
+#[derive(Debug, Options)]
 struct Opt {
+    // Options here can be accepted with any command (or none at all),
+    // but they must come before the command name.
+    #[options(help = "Prints help information")]
+    help: bool,
+
+    #[options(help = "Prints version information\n")]
+    version: bool,
+
     /// Display the specified year [default: current]
-    #[structopt(name = "year", short = "y")]
+    #[options(short = "y", no_long, meta = "<year>")]
     year: Option<i32>,
 
     /// Display the specified month [default: current]
-    #[structopt(name = "month", short = "m")]
+    #[options(short = "m", no_long, meta = "<month>")]
     month: Option<u32>,
 
-    /// Display the number of months after the current month
-    #[structopt(name = "months after", short = "A", default_value = "0")]
+    /// Display the number of months after the current month [default: 0]
+    #[options(short = "A", no_long, meta = "<months after>")]
     months_after: u16,
 
-    /// Display the number of months before the current month
-    #[structopt(name = "months before", short = "B", default_value = "0")]
+    /// Display the number of months before the current month [default: 0]
+    #[options(short = "B", no_long, meta = "<months before>")]
     months_before: u16,
 }
 
 fn main() {
-    let opt = Opt::from_args();
+    let opt = Opt::parse_args_default_or_exit();
+
+    if opt.version {
+        println!("{} {}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
+        return;
+    }
 
     let now = Local::now().naive_local().date();
 

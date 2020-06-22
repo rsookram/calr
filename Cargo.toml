@@ -12,7 +12,7 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 chrono = "0.4"
-structopt = { version = "0.3", default-features = false }
+gumdrop = "0.8"
 
 [profile.release]
 lto = true
