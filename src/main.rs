@@ -5,16 +5,10 @@ use calr::month::iter::MonthGenerator;
 use calr::month::Month;
 use chrono::prelude::*;
 use error::Error;
-use gumdrop::Options;
 use opt::Opt;
 
 fn main() {
-    let opt = Opt::parse_args_default_or_exit();
-
-    if opt.version {
-        println!("{} {}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
-        return;
-    }
+    let opt = Opt::from_args();
 
     let now = Local::now().naive_local().date();
 

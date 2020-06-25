@@ -12,7 +12,7 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 chrono = "0.4"
-gumdrop = "0.8"
+pico-args = "0.3"
 
 [profile.release]
 lto = true

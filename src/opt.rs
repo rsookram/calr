@@ -1,29 +1,79 @@
-use gumdrop::Options;
+use pico_args::Arguments;
+use pico_args::Error;
+use std::process;
 
-/// Command-line tool which displays a calendar
-#[derive(Debug, Options)]
+/// Contains parsed command line arguments
+#[derive(Debug)]
 pub struct Opt {
-    // Options here can be accepted with any command (or none at all),
-    // but they must come before the command name.
-    #[options(help = "Prints help information")]
-    help: bool,
-
-    #[options(help = "Prints version information\n")]
-    pub version: bool,
-
-    /// Display the specified year [default: current]
-    #[options(short = "y", no_long, meta = "<year>")]
+    /// The year to display
     pub year: Option<i32>,
 
-    /// Display the specified month [default: current]
-    #[options(short = "m", no_long, meta = "<month>")]
+    /// The month to display
     pub month: Option<u32>,
 
-    /// Display the number of months after the current month [default: 0]
-    #[options(short = "A", no_long, meta = "<months after>")]
+    /// The number of months after the current month to display
     pub months_after: u16,
 
-    /// Display the number of months before the current month [default: 0]
-    #[options(short = "B", no_long, meta = "<months before>")]
+    /// The number of months before the current month to display
     pub months_before: u16,
+}
+
+impl Opt {
+    /// Gets [Opt] from the command line arguments. Prints the error message
+    /// and quits the program in case of failure.
+    pub fn from_args() -> Self {
+        let mut args = Arguments::from_env();
+
+        if args.contains(["-h", "--help"]) {
+            print_help();
+            process::exit(0);
+        }
+
+        if args.contains(["-V", "--version"]) {
+            println!("{} {}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
+            process::exit(0);
+        }
+
+        Self::parse(args).unwrap_or_else(|e| {
+            eprintln!("error: {}", e);
+            process::exit(1);
+        })
+    }
+
+    fn parse(mut args: Arguments) -> Result<Self, Error> {
+        let result = Self {
+            year: args.opt_value_from_str("-y")?,
+            month: args.opt_value_from_str("-m")?,
+            months_after: args.opt_value_from_str("-A")?.unwrap_or(0),
+            months_before: args.opt_value_from_str("-B")?.unwrap_or(0),
+        };
+
+        args.finish()?;
+
+        Ok(result)
+    }
+}
+
+fn print_help() {
+    let pkg_name = env!("CARGO_PKG_NAME");
+    println!(
+        r#"{} {}
+Command-line tool which displays a calendar
+
+USAGE:
+    {} [OPTIONS]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -y <year>                 Display the specified year [default: current]
+    -m <month>                Display the specified month [default: current]
+    -A <months after>         Display the number of months after the current month [default: 0]
+    -B <months before>        Display the number of months before the current month [default: 0]"#,
+        pkg_name,
+        env!("CARGO_PKG_VERSION"),
+        pkg_name
+    );
 }

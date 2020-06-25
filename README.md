@@ -29,18 +29,18 @@ cargo install --git https://github.com/rsookram/calr
 ## Usage
 
 ```
-Usage: calr [OPTIONS]
+USAGE:
+    calr [OPTIONS]
 
-Command-line tool which displays a calendar
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
 
-Optional arguments:
-  -h, --help          Prints help information
-  -v, --version       Prints version information
-
-  -y <year>           Display the specified year [default: current]
-  -m <month>          Display the specified month [default: current]
-  -A <months after>   Display the number of months after the current month [default: 0]
-  -B <months before>  Display the number of months before the current month [default: 0]
+OPTIONS:
+    -y <year>                 Display the specified year [default: current]
+    -m <month>                Display the specified month [default: current]
+    -A <months after>         Display the number of months after the current month [default: 0]
+    -B <months before>        Display the number of months before the current month [default: 0]
 ```
 
 ## Building
@@ -55,7 +55,7 @@ cargo build --release
 
 ## Dependencies
 
-[`gumdrop`](https://crates.io/crates/gumdrop) is used to parse command line
+[`pico-args`](https://crates.io/crates/pico-args) is used to parse command line
 arguments and [`chrono`](https://crates.io/crates/chrono) is used for working
 with time.
 
