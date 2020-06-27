@@ -55,13 +55,12 @@ impl Opt {
 }
 
 fn print_help() {
-    let pkg_name = env!("CARGO_PKG_NAME");
     println!(
-        r#"{} {}
+        r#"{name} {version}
 Command-line tool which displays a calendar
 
 USAGE:
-    {} [OPTIONS]
+    {name} [OPTIONS]
 
 FLAGS:
     -h, --help       Prints help information
@@ -72,8 +71,7 @@ OPTIONS:
     -m <month>                Display the specified month [default: current]
     -A <months after>         Display the number of months after the current month [default: 0]
     -B <months before>        Display the number of months before the current month [default: 0]"#,
-        pkg_name,
-        env!("CARGO_PKG_VERSION"),
-        pkg_name
+        name = env!("CARGO_PKG_NAME"),
+        version = env!("CARGO_PKG_VERSION"),
     );
 }
