@@ -48,9 +48,14 @@ impl Opt {
             months_before: args.opt_value_from_str("-B")?.unwrap_or(0),
         };
 
-        args.finish()?;
-
-        Ok(result)
+        if args.finish().is_empty() {
+            Ok(result)
+        } else {
+            // TODO: Should print usage in this case
+            Err(Error::ArgumentParsingFailed {
+                cause: "passed unknown arguments".to_string(),
+            })
+        }
     }
 }
 

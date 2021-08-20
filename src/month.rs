@@ -1,6 +1,6 @@
 pub mod iter;
 
-use chrono::prelude::*;
+use chrono::{Datelike, NaiveDate, Weekday};
 use std::cmp::min;
 use std::fmt;
 use std::ops::RangeInclusive;
