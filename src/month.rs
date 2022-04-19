@@ -1,9 +1,11 @@
 pub mod iter;
 
-use chrono::{Datelike, NaiveDate, Weekday};
 use std::cmp::min;
+use std::convert::TryInto;
 use std::fmt;
 use std::ops::RangeInclusive;
+use time::Date;
+use time::Weekday;
 
 // Trailing spaces are for consistency with cal
 const TRAILING_SPACE: &str = "  ";
@@ -12,7 +14,7 @@ const DAY_OF_WEEK_HEADER: &str = "Su Mo Tu We Th Fr Sa";
 /// A calendar month associated with a specific year
 #[derive(PartialEq, Eq, Hash, PartialOrd, Ord, Clone, Debug)]
 pub struct Month {
-    date: NaiveDate,
+    date: Date,
 }
 
 impl Month {
@@ -29,8 +31,8 @@ impl Month {
     /// assert!(Month::new(2020, 12).is_some());
     /// assert!(Month::new(2020, 13).is_none());
     /// ```
-    pub fn new(year: i32, month: u32) -> Option<Month> {
-        let date = NaiveDate::from_ymd_opt(year, month, 1)?;
+    pub fn new(year: i32, month: u8) -> Option<Month> {
+        let date = Date::from_calendar_date(year, month.try_into().ok()?, 1).ok()?;
         Some(Month { date })
     }
 
@@ -55,31 +57,13 @@ impl Month {
     /// assert_eq!(Month::new(2020, 1).unwrap().month_number(), 1);
     /// assert_eq!(Month::new(2020, 12).unwrap().month_number(), 12);
     /// ```
-    pub fn month_number(&self) -> u32 {
-        self.date.month()
+    pub fn month_number(&self) -> u8 {
+        self.date.month() as u8
     }
 
     /// Allocates a `String` to display as the header of this `Month`
     fn month_header(&self) -> String {
-        format!("{} {}", self.month_name(), self.date.year())
-    }
-
-    /// Returns the full English name of the `Month`. e.g. "September".
-    fn month_name(&self) -> &str {
-        [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December",
-        ][self.date.month0() as usize]
+        format!("{} {}", self.date.month().to_string(), self.date.year())
     }
 
     /// Allocates a `String` to display the weeks of this `Month`
@@ -103,7 +87,7 @@ impl Month {
         result
     }
 
-    fn layout_weeks(&self) -> Vec<RangeInclusive<u32>> {
+    fn layout_weeks(&self) -> Vec<RangeInclusive<u8>> {
         let initial_weekday = self.weekday_for_first();
 
         let last_day_in_month = self.num_days_in_month();
@@ -112,7 +96,7 @@ impl Month {
 
         let mut result = vec![];
 
-        let days_in_first_week = 7 - initial_weekday.num_days_from_sunday();
+        let days_in_first_week = 7 - initial_weekday.number_days_from_sunday();
         result.push(start..=days_in_first_week);
         start += days_in_first_week;
         days_remaining -= days_in_first_week;
@@ -131,20 +115,20 @@ impl Month {
         result
     }
 
-    fn week(days: RangeInclusive<u32>) -> String {
+    fn week(days: RangeInclusive<u8>) -> String {
         days.map(|d| format!("{:2}", d))
             .collect::<Vec<String>>()
             .join(" ")
     }
 
     fn weekday_for_first(&self) -> Weekday {
-        self.date.with_day0(0).unwrap().weekday()
+        self.date.replace_day(1).unwrap().weekday()
     }
 
-    fn num_days_in_month(&self) -> u32 {
+    fn num_days_in_month(&self) -> u8 {
         (28..=31)
             .rev()
-            .find(|&i| self.date.with_day(i).is_some())
+            .find(|&i| self.date.replace_day(i).is_ok())
             .unwrap_or_else(|| panic!("unknown number of days in month {}", self.date.month()))
     }
 }
@@ -188,7 +172,7 @@ mod test {
             |13 14 15 16 17 18 19  |
             |20 21 22 23 24 25 26  |
             |27 28 29 30 31        |
-        "#,
+            "#,
         );
         assert_eq!(expected, actual);
     }
@@ -206,7 +190,7 @@ mod test {
             |14 15 16 17 18 19 20  |
             |21 22 23 24 25 26 27  |
             |28 29                 |
-        "#,
+            "#,
         );
         assert_eq!(expected, actual);
     }
@@ -224,7 +208,7 @@ mod test {
             |10 11 12 13 14 15 16  |
             |17 18 19 20 21 22 23  |
             |24 25 26 27 28        |
-        "#,
+            "#,
         );
         assert_eq!(expected, actual);
     }
@@ -243,7 +227,7 @@ mod test {
             |17 18 19 20 21 22 23  |
             |24 25 26 27 28 29 30  |
             |31                    |
-        "#,
+            "#,
         );
         assert_eq!(expected, actual);
     }
@@ -261,7 +245,7 @@ mod test {
             |14 15 16 17 18 19 20  |
             |21 22 23 24 25 26 27  |
             |28 29 30              |
-        "#,
+            "#,
         );
         assert_eq!(expected, actual);
     }
@@ -279,7 +263,7 @@ mod test {
             |12 13 14 15 16 17 18  |
             |19 20 21 22 23 24 25  |
             |26 27 28 29 30 31     |
-        "#,
+            "#,
         );
         assert_eq!(expected, actual);
     }
@@ -298,7 +282,7 @@ mod test {
             |16 17 18 19 20 21 22  |
             |23 24 25 26 27 28 29  |
             |30                    |
-        "#,
+            "#,
         );
         assert_eq!(expected, actual);
     }
@@ -316,7 +300,7 @@ mod test {
             |14 15 16 17 18 19 20  |
             |21 22 23 24 25 26 27  |
             |28 29 30 31           |
-        "#,
+            "#,
         );
         assert_eq!(expected, actual);
     }
@@ -334,7 +318,7 @@ mod test {
             |11 12 13 14 15 16 17  |
             |18 19 20 21 22 23 24  |
             |25 26 27 28 29 30 31  |
-        "#,
+            "#,
         );
         assert_eq!(expected, actual);
     }
@@ -352,7 +336,7 @@ mod test {
             |15 16 17 18 19 20 21  |
             |22 23 24 25 26 27 28  |
             |29 30                 |
-        "#,
+            "#,
         );
         assert_eq!(expected, actual);
     }
@@ -370,7 +354,7 @@ mod test {
             |13 14 15 16 17 18 19  |
             |20 21 22 23 24 25 26  |
             |27 28 29 30 31        |
-        "#,
+            "#,
         );
         assert_eq!(expected, actual);
     }
@@ -388,7 +372,7 @@ mod test {
             |10 11 12 13 14 15 16  |
             |17 18 19 20 21 22 23  |
             |24 25 26 27 28 29 30  |
-        "#,
+            "#,
         );
         assert_eq!(expected, actual);
     }
@@ -406,7 +390,7 @@ mod test {
             |15 16 17 18 19 20 21  |
             |22 23 24 25 26 27 28  |
             |29 30 31              |
-        "#,
+            "#,
         );
         assert_eq!(expected, actual);
     }

@@ -9,7 +9,7 @@ pub struct Opt {
     pub year: Option<i32>,
 
     /// The month to display
-    pub month: Option<u32>,
+    pub month: Option<u8>,
 
     /// The number of months after the current month to display
     pub months_after: u16,

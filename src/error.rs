@@ -3,7 +3,8 @@ use std::fmt;
 #[derive(Debug)]
 pub enum Error {
     InvalidYear(i32),
-    InvalidMonth(u32),
+    InvalidMonth(u8),
+    UnknownOffset,
 }
 
 impl fmt::Display for Error {
@@ -11,6 +12,7 @@ impl fmt::Display for Error {
         match self {
             Error::InvalidYear(year) => write!(f, "year `{}' is not in range 1..9999", year),
             Error::InvalidMonth(month) => write!(f, "{} is not a month number (1..12)", month),
+            Error::UnknownOffset => write!(f, "failed to determine current timezone offset"),
         }
     }
 }

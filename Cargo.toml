@@ -11,8 +11,8 @@ keywords = ["calendar"]
 categories = ["command-line-utilities"]
 
 [dependencies]
-chrono = "0.4"
 pico-args = "0.4"
+time = {version = "0.3.9", features = ["local-offset"]}
 
 [profile.release]
 lto = true
