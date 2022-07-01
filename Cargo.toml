@@ -2,7 +2,7 @@
 name = "calr"
 version = "0.1.0"
 authors = ["rsookram <rashadsookram@gmail.com>"]
-edition = "2018"
+edition = "2021"
 description = "Command-line tool which displays a calendar"
 readme = "README.md"
 repository = "https://github.com/rsookram/calr"
@@ -17,3 +17,4 @@ time = {version = "0.3", features = ["local-offset"]}
 [profile.release]
 lto = true
 codegen-units = 1
+strip = "debuginfo"

@@ -35,7 +35,7 @@ impl Opt {
         }
 
         Self::parse(args).unwrap_or_else(|e| {
-            eprintln!("error: {}", e);
+            eprintln!("error: {e}");
             process::exit(1);
         })
     }

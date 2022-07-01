@@ -18,20 +18,20 @@ fn main() {
 
     let months = months(now, &opt).unwrap_or_else(|e| exit_with_error(&e));
     let output = months
-        .map(|month| format!("{}", month))
+        .map(|month| format!("{month}"))
         .collect::<Vec<_>>()
         .join("\n");
-    println!("{}", output);
+    println!("{output}");
 }
 
 fn months(now: Date, opt: &Opt) -> Result<impl Iterator<Item = Month>, Error> {
     let year = opt.year.unwrap_or_else(|| now.year());
-    if year < 1 || year > 9999 {
+    if !(1..=9999).contains(&year) {
         return Err(Error::InvalidYear(year));
     }
 
     let month_number = opt.month.unwrap_or_else(|| now.month() as u8);
-    if month_number < 1 || month_number > 12 {
+    if !(1..=12).contains(&month_number) {
         return Err(Error::InvalidMonth(month_number));
     }
 
@@ -46,7 +46,7 @@ fn months(now: Date, opt: &Opt) -> Result<impl Iterator<Item = Month>, Error> {
 }
 
 fn exit_with_error(err: &Error) -> ! {
-    eprintln!("calr: {}", err);
+    eprintln!("calr: {err}");
 
     let code = match err {
         Error::InvalidYear(_) | Error::InvalidMonth(_) => 64,

@@ -3,6 +3,7 @@ pub mod iter;
 use std::cmp::min;
 use std::convert::TryInto;
 use std::fmt;
+use std::fmt::Write;
 use std::ops::RangeInclusive;
 use time::Date;
 use time::Weekday;
@@ -63,7 +64,7 @@ impl Month {
 
     /// Allocates a `String` to display as the header of this `Month`
     fn month_header(&self) -> String {
-        format!("{} {}", self.date.month().to_string(), self.date.year())
+        format!("{} {}", self.date.month(), self.date.year())
     }
 
     /// Allocates a `String` to display the weeks of this `Month`
@@ -74,9 +75,9 @@ impl Month {
         let last_week = layout.len() - 1;
         for (i, w) in layout.into_iter().enumerate() {
             if i == 0 {
-                result.push_str(&format!("{:>20}", Month::week(w)));
+                write!(result, "{:>20}", Month::week(w)).expect("write to String");
             } else if i == last_week {
-                result.push_str(&format!("{:<20}", Month::week(w)));
+                write!(result, "{:<20}", Month::week(w)).expect("write to String");
             } else {
                 result.push_str(&Month::week(w));
             }
@@ -136,9 +137,9 @@ impl Month {
 impl fmt::Display for Month {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         write!(f, "{:^20}", self.month_header())?;
-        writeln!(f, "{}", TRAILING_SPACE)?;
-        write!(f, "{}", DAY_OF_WEEK_HEADER)?;
-        writeln!(f, "{}", TRAILING_SPACE)?;
+        writeln!(f, "{TRAILING_SPACE}")?;
+        write!(f, "{DAY_OF_WEEK_HEADER}")?;
+        writeln!(f, "{TRAILING_SPACE}")?;
         write!(f, "{}", self.weeks())
     }
 }
@@ -162,7 +163,7 @@ mod test {
     #[test]
     fn january() {
         let m = Month::new(2019, 1).expect("invalid date");
-        let actual = format!("{}", m);
+        let actual = format!("{m}");
         let expected = from_formatted(
             r#"
             |    January 2019      |
@@ -180,7 +181,7 @@ mod test {
     #[test]
     fn february_leap_year() {
         let m = Month::new(2016, 2).expect("invalid date");
-        let actual = format!("{}", m);
+        let actual = format!("{m}");
         let expected = from_formatted(
             r#"
             |   February 2016      |
@@ -198,7 +199,7 @@ mod test {
     #[test]
     fn february_not_leap_year() {
         let m = Month::new(2019, 2).expect("invalid date");
-        let actual = format!("{}", m);
+        let actual = format!("{m}");
         let expected = from_formatted(
             r#"
             |   February 2019      |
@@ -216,7 +217,7 @@ mod test {
     #[test]
     fn march() {
         let m = Month::new(2019, 3).expect("invalid date");
-        let actual = format!("{}", m);
+        let actual = format!("{m}");
         let expected = from_formatted(
             r#"
             |     March 2019       |
@@ -235,7 +236,7 @@ mod test {
     #[test]
     fn april() {
         let m = Month::new(2019, 4).expect("invalid date");
-        let actual = format!("{}", m);
+        let actual = format!("{m}");
         let expected = from_formatted(
             r#"
             |     April 2019       |
@@ -253,7 +254,7 @@ mod test {
     #[test]
     fn may() {
         let m = Month::new(2019, 5).expect("invalid date");
-        let actual = format!("{}", m);
+        let actual = format!("{m}");
         let expected = from_formatted(
             r#"
             |      May 2019        |
@@ -271,7 +272,7 @@ mod test {
     #[test]
     fn june() {
         let m = Month::new(2019, 6).expect("invalid date");
-        let actual = format!("{}", m);
+        let actual = format!("{m}");
         let expected = from_formatted(
             r#"
             |     June 2019        |
@@ -290,7 +291,7 @@ mod test {
     #[test]
     fn july() {
         let m = Month::new(2019, 7).expect("invalid date");
-        let actual = format!("{}", m);
+        let actual = format!("{m}");
         let expected = from_formatted(
             r#"
             |     July 2019        |
@@ -308,7 +309,7 @@ mod test {
     #[test]
     fn august() {
         let m = Month::new(2019, 8).expect("invalid date");
-        let actual = format!("{}", m);
+        let actual = format!("{m}");
         let expected = from_formatted(
             r#"
             |    August 2019       |
@@ -326,7 +327,7 @@ mod test {
     #[test]
     fn september() {
         let m = Month::new(2019, 9).expect("invalid date");
-        let actual = format!("{}", m);
+        let actual = format!("{m}");
         let expected = from_formatted(
             r#"
             |   September 2019     |
@@ -344,7 +345,7 @@ mod test {
     #[test]
     fn october() {
         let m = Month::new(2019, 10).expect("invalid date");
-        let actual = format!("{}", m);
+        let actual = format!("{m}");
         let expected = from_formatted(
             r#"
             |    October 2019      |
@@ -362,7 +363,7 @@ mod test {
     #[test]
     fn november() {
         let m = Month::new(2019, 11).expect("invalid date");
-        let actual = format!("{}", m);
+        let actual = format!("{m}");
         let expected = from_formatted(
             r#"
             |   November 2019      |
@@ -380,7 +381,7 @@ mod test {
     #[test]
     fn december() {
         let m = Month::new(2019, 12).expect("invalid date");
-        let actual = format!("{}", m);
+        let actual = format!("{m}");
         let expected = from_formatted(
             r#"
             |   December 2019      |
