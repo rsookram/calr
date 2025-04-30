@@ -36,13 +36,13 @@ fn months(now: Date, opt: &Opt) -> Result<impl Iterator<Item = Month>, Error> {
     }
 
     let m = Month::new(year, month_number).expect("invalid time");
-    let mut gen = MonthGenerator::new(m);
+    let mut generator = MonthGenerator::new(m);
 
     if opt.months_before > 0 {
-        gen.nth_prev(usize::from(opt.months_before) - 1);
+        generator.nth_prev(usize::from(opt.months_before) - 1);
     }
 
-    Ok(gen.take(usize::from(opt.months_after + opt.months_before) + 1))
+    Ok(generator.take(usize::from(opt.months_after + opt.months_before) + 1))
 }
 
 fn exit_with_error(err: &Error) -> ! {
