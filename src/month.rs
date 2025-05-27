@@ -123,7 +123,10 @@ impl Month {
     }
 
     fn weekday_for_first(&self) -> Weekday {
-        self.date.replace_day(1).unwrap().weekday()
+        self.date
+            .replace_day(1)
+            .expect("every month has a first")
+            .weekday()
     }
 
     fn num_days_in_month(&self) -> u8 {
