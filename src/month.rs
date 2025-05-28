@@ -91,7 +91,7 @@ impl Month {
     fn layout_weeks(&self) -> Vec<RangeInclusive<u8>> {
         let initial_weekday = self.weekday_for_first();
 
-        let last_day_in_month = self.num_days_in_month();
+        let last_day_in_month = self.date.month().length(self.date.year());
         let mut days_remaining = last_day_in_month;
         let mut start = 1;
 
@@ -127,13 +127,6 @@ impl Month {
             .replace_day(1)
             .expect("every month has a first")
             .weekday()
-    }
-
-    fn num_days_in_month(&self) -> u8 {
-        (28..=31)
-            .rev()
-            .find(|&i| self.date.replace_day(i).is_ok())
-            .unwrap_or_else(|| panic!("unknown number of days in month {}", self.date.month()))
     }
 }
 
