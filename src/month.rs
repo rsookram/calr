@@ -106,11 +106,7 @@ impl Month {
             let end_of_week = min(start + 6, last_day_in_month);
             result.push(start..=end_of_week);
             start += 7;
-            days_remaining = if days_remaining >= 7 {
-                days_remaining - 7
-            } else {
-                0
-            };
+            days_remaining = days_remaining.saturating_sub(7);
         }
 
         result
