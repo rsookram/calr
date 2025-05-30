@@ -59,7 +59,7 @@ impl Month {
     /// assert_eq!(Month::new(2020, 12).unwrap().month_number(), 12);
     /// ```
     pub fn month_number(&self) -> u8 {
-        self.date.month() as u8
+        u8::from(self.date.month())
     }
 
     /// Allocates a `String` to display as the header of this `Month`

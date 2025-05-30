@@ -30,7 +30,7 @@ fn months(now: Date, opt: &Opt) -> Result<impl Iterator<Item = Month>, Error> {
         return Err(Error::InvalidYear(year));
     }
 
-    let month_number = opt.month.unwrap_or_else(|| now.month() as u8);
+    let month_number = opt.month.unwrap_or_else(|| u8::from(now.month()));
     if !(1..=12).contains(&month_number) {
         return Err(Error::InvalidMonth(month_number));
     }
