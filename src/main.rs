@@ -18,7 +18,7 @@ fn main() {
 
     let months = months(now, &opt).unwrap_or_else(|e| exit_with_error(&e));
     let output = months
-        .map(|month| format!("{month}"))
+        .map(|month| month.to_string())
         .collect::<Vec<_>>()
         .join("\n");
     println!("{output}");
