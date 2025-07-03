@@ -25,15 +25,27 @@ fn main() {
 }
 
 fn months(now: Date, opt: &Opt) -> Result<impl Iterator<Item = Month>, Error> {
-    let year = opt.year.unwrap_or_else(|| now.year());
-    if !(1..=9999).contains(&year) {
-        return Err(Error::InvalidYear(year));
-    }
+    let year = match opt.year {
+        Some(y) => {
+            if !(1..=9999).contains(&y) {
+                return Err(Error::InvalidYear(y));
+            }
 
-    let month_number = opt.month.unwrap_or_else(|| u8::from(now.month()));
-    if !(1..=12).contains(&month_number) {
-        return Err(Error::InvalidMonth(month_number));
-    }
+            y as i32
+        }
+        None => now.year(),
+    };
+
+    let month_number = match opt.month {
+        Some(num) => {
+            if !(1..=12).contains(&num) {
+                return Err(Error::InvalidMonth(num));
+            }
+
+            num as u8
+        }
+        None => u8::from(now.month()),
+    };
 
     let m = Month::new(year, month_number).expect("invalid time");
     let mut generator = MonthGenerator::new(m);

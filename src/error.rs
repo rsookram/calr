@@ -2,8 +2,8 @@ use std::fmt;
 
 #[derive(Debug)]
 pub enum Error {
-    InvalidYear(i32),
-    InvalidMonth(u8),
+    InvalidYear(u16),
+    InvalidMonth(u16),
     UnknownOffset,
 }
 

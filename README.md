@@ -55,9 +55,7 @@ cargo build --release
 
 ## Dependencies
 
-[`pico-args`](https://crates.io/crates/pico-args) is used to parse command line
-arguments and [`time`](https://crates.io/crates/time) is used for working
-with time.
+[`time`](https://crates.io/crates/time) is used for working with time.
 
 ## License
 

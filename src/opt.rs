@@ -1,15 +1,17 @@
-use pico_args::Arguments;
-use pico_args::Error;
-use std::process;
+use std::{
+    env::args_os,
+    ffi::{OsStr, OsString},
+    process,
+};
 
 /// Contains parsed command line arguments
 #[derive(Debug)]
 pub struct Opt {
     /// The year to display
-    pub year: Option<i32>,
+    pub year: Option<u16>,
 
     /// The month to display
-    pub month: Option<u8>,
+    pub month: Option<u16>,
 
     /// The number of months after the current month to display
     pub months_after: u16,
@@ -22,14 +24,14 @@ impl Opt {
     /// Gets [Opt] from the command line arguments. Prints the error message
     /// and quits the program in case of failure.
     pub fn from_args() -> Self {
-        let mut args = Arguments::from_env();
+        let args = Arguments::from_env();
 
-        if args.contains(["-h", "--help"]) {
-            print_help();
+        if args.contains("-h") || args.contains("--help") {
+            print_usage();
             process::exit(0);
         }
 
-        if args.contains(["-V", "--version"]) {
+        if args.contains("-V") || args.contains("--version") {
             println!("{} {}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
             process::exit(0);
         }
@@ -40,26 +42,21 @@ impl Opt {
         })
     }
 
-    fn parse(mut args: Arguments) -> Result<Self, Error> {
+    fn parse(args: Arguments) -> Result<Self, String> {
         let result = Self {
-            year: args.opt_value_from_str("-y")?,
-            month: args.opt_value_from_str("-m")?,
-            months_after: args.opt_value_from_str("-A")?.unwrap_or(0),
-            months_before: args.opt_value_from_str("-B")?.unwrap_or(0),
+            year: args.opt_value_as_u16("-y")?,
+            month: args.opt_value_as_u16("-m")?,
+            // Default to 0 months before / after only when the options aren't set. Error out if
+            // they fail to parse.
+            months_after: args.opt_value_as_u16("-A")?.unwrap_or(0),
+            months_before: args.opt_value_as_u16("-B")?.unwrap_or(0),
         };
 
-        if args.finish().is_empty() {
-            Ok(result)
-        } else {
-            // TODO: Should print usage in this case
-            Err(Error::ArgumentParsingFailed {
-                cause: "passed unknown arguments".to_string(),
-            })
-        }
+        Ok(result)
     }
 }
 
-fn print_help() {
+fn print_usage() {
     println!(
         r#"{name} {version}
 Command-line tool which displays a calendar
@@ -79,4 +76,43 @@ OPTIONS:
         name = env!("CARGO_PKG_NAME"),
         version = env!("CARGO_PKG_VERSION"),
     );
+}
+
+/// The raw command line arguments
+#[derive(Debug)]
+struct Arguments {
+    /// args contains all the command line arguments following the program name
+    args: Vec<OsString>,
+}
+
+impl Arguments {
+    fn from_env() -> Self {
+        Self {
+            args: args_os().skip(1).collect(),
+        }
+    }
+
+    /// Returns whether there's an argument matching the given `key`
+    fn contains(&self, key: &'static str) -> bool {
+        self.args.iter().any(|arg| arg == key)
+    }
+
+    /// Returns the command line argument following the given `key`
+    fn opt_os_str(&self, key: &'static str) -> Option<&OsStr> {
+        let idx = self.args.iter().position(|arg| arg == key)?;
+        Some(self.args.get(idx + 1)?)
+    }
+
+    fn opt_value_as_u16(&self, key: &'static str) -> Result<Option<u16>, String> {
+        let Some(value_str) = self.opt_os_str(key) else {
+            return Ok(None);
+        };
+
+        let str = value_str
+            .to_str()
+            .ok_or_else(|| format!("invalid argument for '{key}' {}", value_str.display()))?;
+        Ok(Some(str.parse::<u16>().map_err(|err| {
+            format!("failed to parse value '{str}' for key '{key}': {err}")
+        })?))
+    }
 }
