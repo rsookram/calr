@@ -62,6 +62,25 @@ impl Month {
         u8::from(self.date.month())
     }
 
+    /// Returns the month prior to this one.
+    ///
+    /// ```
+    /// use calr::month::Month;
+    ///
+    /// assert_eq!(Month::new(2025, 7).unwrap().prev(), Month::new(2025, 6));
+    /// assert_eq!(Month::new(2025, 1).unwrap().prev(), Month::new(2024, 12));
+    /// ```
+    pub fn prev(&self) -> Option<Self> {
+        let mut year = self.year();
+        let mut next_month_number = self.month_number() - 1;
+        if next_month_number < 1 {
+            next_month_number = 12;
+            year -= 1;
+        }
+
+        Month::new(year, next_month_number)
+    }
+
     /// Allocates a `String` to display as the header of this `Month`
     fn month_header(&self) -> String {
         format!("{} {}", self.date.month(), self.date.year())

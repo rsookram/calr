@@ -47,14 +47,14 @@ fn months(now: Date, opt: &Opt) -> Result<impl Iterator<Item = Month>, Error> {
         None => u8::from(now.month()),
     };
 
-    let m = Month::new(year, month_number).expect("invalid time");
-    let mut generator = MonthGenerator::new(m);
-
-    if opt.months_before > 0 {
-        generator.nth_prev(usize::from(opt.months_before) - 1);
+    let mut m = Month::new(year, month_number).expect("valid time");
+    for _ in 0..opt.months_before {
+        m = m.prev().expect("valid time");
     }
 
-    Ok(generator.take(usize::from(opt.months_after + opt.months_before) + 1))
+    let generator = MonthGenerator::new(m);
+
+    Ok(generator.take(usize::from(opt.months_after) + usize::from(opt.months_before) + 1))
 }
 
 fn exit_with_error(err: &Error) -> ! {
