@@ -27,7 +27,7 @@ impl Iterator for MonthGenerator {
             year += 1;
         }
 
-        let result = self.month.clone();
+        let result = self.month;
         self.month = Month::new(year, next_month_number);
 
         result

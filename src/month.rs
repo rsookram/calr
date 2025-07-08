@@ -13,7 +13,7 @@ const TRAILING_SPACE: &str = "  ";
 const DAY_OF_WEEK_HEADER: &str = "Su Mo Tu We Th Fr Sa";
 
 /// A calendar month associated with a specific year
-#[derive(PartialEq, Eq, Hash, PartialOrd, Ord, Clone, Debug)]
+#[derive(PartialEq, Eq, Hash, PartialOrd, Ord, Copy, Clone, Debug)]
 pub struct Month {
     date: Date,
 }
