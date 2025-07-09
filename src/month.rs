@@ -132,7 +132,7 @@ impl Month {
     }
 
     fn week(days: RangeInclusive<u8>) -> String {
-        days.map(|d| format!("{:2}", d))
+        days.map(|d| format!("{d:2}"))
             .collect::<Vec<String>>()
             .join(" ")
     }
