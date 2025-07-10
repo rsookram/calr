@@ -6,7 +6,6 @@ use std::fmt;
 use std::fmt::Write;
 use std::ops::RangeInclusive;
 use time::Date;
-use time::Weekday;
 
 // Trailing spaces are for consistency with cal
 const TRAILING_SPACE: &str = "  ";
@@ -15,7 +14,7 @@ const DAY_OF_WEEK_HEADER: &str = "Su Mo Tu We Th Fr Sa";
 /// A calendar month associated with a specific year
 #[derive(PartialEq, Eq, Hash, PartialOrd, Ord, Copy, Clone, Debug)]
 pub struct Month {
-    date: Date,
+    first_day_of_month: Date,
 }
 
 impl Month {
@@ -33,8 +32,8 @@ impl Month {
     /// assert!(Month::new(2020, 13).is_none());
     /// ```
     pub fn new(year: i32, month: u8) -> Option<Month> {
-        let date = Date::from_calendar_date(year, month.try_into().ok()?, 1).ok()?;
-        Some(Month { date })
+        let first_day_of_month = Date::from_calendar_date(year, month.try_into().ok()?, 1).ok()?;
+        Some(Month { first_day_of_month })
     }
 
     /// The year this `Month` is associated with.
@@ -45,7 +44,7 @@ impl Month {
     /// assert_eq!(Month::new(2020, 1).unwrap().year(), 2020);
     /// ```
     pub fn year(&self) -> i32 {
-        self.date.year()
+        self.first_day_of_month.year()
     }
 
     /// Returns the month number starting from 1.
@@ -59,7 +58,7 @@ impl Month {
     /// assert_eq!(Month::new(2020, 12).unwrap().month_number(), 12);
     /// ```
     pub fn month_number(&self) -> u8 {
-        u8::from(self.date.month())
+        u8::from(self.first_day_of_month.month())
     }
 
     /// Returns the month prior to this one.
@@ -83,7 +82,11 @@ impl Month {
 
     /// Allocates a `String` to display as the header of this `Month`
     fn month_header(&self) -> String {
-        format!("{} {}", self.date.month(), self.date.year())
+        format!(
+            "{} {}",
+            self.first_day_of_month.month(),
+            self.first_day_of_month.year()
+        )
     }
 
     /// Allocates a `String` to display the weeks of this `Month`
@@ -108,9 +111,12 @@ impl Month {
     }
 
     fn layout_weeks(&self) -> Vec<RangeInclusive<u8>> {
-        let initial_weekday = self.weekday_for_first();
+        let initial_weekday = self.first_day_of_month.weekday();
 
-        let last_day_in_month = self.date.month().length(self.date.year());
+        let last_day_in_month = self
+            .first_day_of_month
+            .month()
+            .length(self.first_day_of_month.year());
         let mut days_remaining = last_day_in_month;
         let mut start = 1;
 
@@ -135,13 +141,6 @@ impl Month {
         days.map(|d| format!("{d:2}"))
             .collect::<Vec<String>>()
             .join(" ")
-    }
-
-    fn weekday_for_first(&self) -> Weekday {
-        self.date
-            .replace_day(1)
-            .expect("every month has a first")
-            .weekday()
     }
 }
 
