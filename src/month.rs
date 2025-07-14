@@ -82,11 +82,7 @@ impl Month {
 
     /// Allocates a `String` to display as the header of this `Month`
     fn month_header(&self) -> String {
-        format!(
-            "{} {}",
-            self.first_day_of_month.month(),
-            self.first_day_of_month.year()
-        )
+        format!("{} {}", self.first_day_of_month.month(), self.year())
     }
 
     /// Allocates a `String` to display the weeks of this `Month`
@@ -113,10 +109,7 @@ impl Month {
     fn layout_weeks(&self) -> Vec<RangeInclusive<u8>> {
         let initial_weekday = self.first_day_of_month.weekday();
 
-        let last_day_in_month = self
-            .first_day_of_month
-            .month()
-            .length(self.first_day_of_month.year());
+        let last_day_in_month = self.first_day_of_month.month().length(self.year());
         let mut days_remaining = last_day_in_month;
         let mut start = 1;
 
